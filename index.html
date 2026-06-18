@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+  <meta name="apple-mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+  <meta name="apple-mobile-web-app-title" content="Jyske Bank"/>
+  <meta name="mobile-web-app-capable" content="yes"/>
+  <meta name="theme-color" content="#1a4d2e"/>
+  <link rel="manifest" href="manifest.json"/>
+  <link rel="apple-touch-icon" href="icon-192.svg"/>
+  <link rel="icon" type="image/svg+xml" href="icon-192.svg"/>
+  <title>Jyske Bank</title>
+  <link rel="stylesheet" href="style.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+</head>
+<body>
+
+<!-- LOADING -->
+<div id="loadingScreen" class="loading-screen">
+  <div class="loader-content">
+    <div class="loader-logo"><div class="loader-icon">◎</div><span>JYSKE BANK</span></div>
+    <div class="loader-bar"><div class="loader-fill"></div></div>
+  </div>
+</div>
+
+<!-- ====== LOGIN ====== -->
+<div id="loginPage" class="page">
+  <div class="login-bg"></div>
+  <div class="login-wrap">
+    <div class="login-brand">
+      <div class="brand-logo"><div class="brand-icon-circle">◎</div><h1>JYSKE BANK</h1></div>
+      <p class="brand-tagline">Secure · Trusted · Yours</p>
+    </div>
+    <div class="login-card">
+      <h2>Welcome Back</h2>
+      <p class="form-sub">Sign in to your account</p>
+      <div id="loginError" class="alert alert-error hidden"></div>
+      <div class="field">
+        <label>Username</label>
+        <input type="text" id="loginUser" placeholder="Enter username" autocomplete="username" inputmode="text"/>
+      </div>
+      <div class="field">
+        <label>Password</label>
+        <div class="pw-wrap">
+          <input type="password" id="loginPass" placeholder="••••••••" autocomplete="current-password"/>
+          <button class="pw-toggle" onclick="togglePw()" tabindex="-1">👁</button>
+        </div>
+      </div>
+      <button class="btn-primary full" onclick="doLogin()"><span>Sign In</span></button>
+      <p class="login-hint">Contact your administrator for access.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ====== USER DASHBOARD ====== -->
+<div id="userPage" class="page">
+  <nav class="topbar">
+    <div class="topbar-brand"><span class="nav-icon">◎</span><span>JYSKE BANK</span></div>
+    <div class="topbar-right">
+      <button class="icon-btn" onclick="toggleTheme()"><span id="themeIconUser">🌙</span></button>
+      <div class="user-chip" id="userChip">—</div>
+      <button class="btn-out" onclick="doLogout()">Log Out</button>
+      <button class="icon-btn menu-btn" onclick="toggleMenu()">☰</button>
+    </div>
+  </nav>
+
+  <!-- SIDE MENU -->
+  <div id="sideMenu" class="side-menu">
+    <div class="side-menu-header">
+      <div class="side-menu-brand"><span>◎</span> JYSKE BANK</div>
+      <button class="side-menu-close" onclick="toggleMenu()">✕</button>
+    </div>
+    <div class="side-menu-user">
+      <div class="smu-avatar">👤</div>
+      <div><div class="smu-name">Wesley Nuno</div><div class="smu-acct">**** **** **** 7662</div></div>
+    </div>
+    <nav class="side-nav">
+      <button class="side-nav-item active" onclick="goHome()"><span class="sni-icon">🏠</span>Home</button>
+
+      <!-- ACCOUNT ACTIVITY -->
+      <button class="side-nav-item" onclick="openSubPage('pageAccountActivity')"><span class="sni-icon">📊</span>Account Activity</button>
+
+      <!-- TRANSACTIONS dropdown -->
+      <div class="side-nav-group">
+        <button class="side-nav-item has-arrow" onclick="toggleDropdown('ddTransactions')"><span class="sni-icon">💳</span>Transactions<span class="sni-arrow" id="arrowTransactions">›</span></button>
+        <div class="side-dropdown hidden" id="ddTransactions">
+          <button class="side-dropdown-item" onclick="openSubPage('pageTxHistory')">Transaction History</button>
+          <button class="side-dropdown-item" onclick="openSubPage('pagePendingTx')">Pending Transactions</button>
+          <button class="side-dropdown-item" onclick="openSubPage('pageScheduled')">Scheduled Payments</button>
+          <button class="side-dropdown-item" onclick="openSubPage('pageDispute')">Dispute a Transaction</button>
+        </div>
+      </div>
+
+      <!-- COMMERCIAL / WIRES dropdown -->
+      <div class="side-nav-group">
+        <button class="side-nav-item has-arrow" onclick="toggleDropdown('ddWires')"><span class="sni-icon">🏧</span>Commercial/Wires<span class="sni-arrow" id="arrowWires">›</span></button>
+        <div class="side-dropdown hidden" id="ddWires">
+          <button class="side-dropdown-item" onclick="openTransferModal()">Send a Wire Transfer</button>
+          <button class="side-dropdown-item" onclick="openSubPage('pageWireStatus')">Wire Transfer Status</button>
+          <button class="side-dropdown-item" onclick="openSubPage('pageWireHistory')">Wire History</button>
+        </div>
+      </div>
+
+      <!-- SERVICES dropdown -->
+      <div class="side-nav-group">
+        <button class="side-nav-item has-arrow" onclick="toggleDropdown('ddServices')"><span class="sni-icon">⚙️</span>Services<span class="sni-arrow" id="arrowServices">›</span></button>
+        <div class="side-dropdown hidden" id="ddServices">
+          <button class="side-dropdown-item" onclick="openSubPage('pageDirectDeposit')">Direct Deposit Form</button>
+          <button class="side-dropdown-item" onclick="openSubPage('pageEstatements')">eStatements</button>
+          <button class="side-dropdown-item" onclick="openSubPage('pageCardServices')">Card Services</button>
+          <button class="side-dropdown-item" onclick="openSubPage('pageMessages')">Messages</button>
+        </div>
+      </div>
+
+      <!-- OPEN NEW ACCOUNT -->
+      <button class="side-nav-item" onclick="openSubPage('pageNewAccount')"><span class="sni-icon">🏦</span>Open a New Account</button>
+
+      <!-- CREDIT SCORE -->
+      <button class="side-nav-item" onclick="openSubPage('pageCreditScore')"><span class="sni-icon">📈</span>My Credit Score &amp; Report</button>
+
+      <!-- SETTINGS dropdown -->
+      <div class="side-nav-group">
+        <button class="side-nav-item has-arrow" onclick="toggleDropdown('ddSettings')"><span class="sni-icon">⚙️</span>Settings<span class="sni-arrow" id="arrowSettings">›</span></button>
+        <div class="side-dropdown hidden" id="ddSettings">
+          <button class="side-dropdown-item" onclick="openSubPage('pageSettings')">Account Settings</button>
+          <button class="side-dropdown-item" onclick="openSubPage('pageNotifications')">Notifications</button>
+          <button class="side-dropdown-item" onclick="openSubPage('pageSecurity')">Security & Privacy</button>
+          <button class="side-dropdown-item" onclick="toggleTheme();toggleMenu()">Toggle Dark Mode</button>
+        </div>
+      </div>
+
+      <button class="side-nav-item logout-item" onclick="doLogout()"><span class="sni-icon">🚪</span>Log Off</button>
+    </nav>
+  </div>
+  <div class="side-menu-overlay hidden" id="menuOverlay" onclick="toggleMenu()"></div>
+
+  <main class="dashboard">
+    <div id="frozenBanner" class="frozen-banner hidden">🔒 This account has been temporarily frozen. Please contact support.</div>
+
+    <div class="card-hero">
+      <div class="bank-card" id="userBankCard">
+        <div class="card-row top"><span class="card-label">SAVINGS</span><span class="card-label" id="userCardDate"></span></div>
+        <div class="card-balance" id="userBalance">—</div>
+        <div class="card-row bottom"><span class="card-pan">**** **** **** 7662</span><span class="card-name">WESLEY NUNO</span></div>
+      </div>
+    </div>
+
+    <div class="action-row">
+      <button class="action-pill" onclick="openSupportModal()"><span class="action-icon">📞</span><span>Support</span></button>
+      <button class="action-pill" id="transferBtn" onclick="openTransferModal()"><span class="action-icon">🏧</span><span>Transfers</span></button>
+      <button class="action-pill" onclick="scrollToSection('txSection')"><span class="action-icon">📋</span><span>History</span></button>
+    </div>
+
+    <!-- Wire requests live status -->
+    <section class="panel" id="wireStatusSection" style="display:none">
+      <div class="panel-head"><h3>🏧 Wire Transfer Requests</h3><span class="live-badge">● LIVE</span></div>
+      <div id="userWireList"></div>
+    </section>
+
+    <!-- ONE transaction list -->
+    <section class="panel" id="txSection">
+      <div class="panel-head"><h3>Recent Transactions</h3><span class="live-badge">● LIVE</span></div>
+      <div id="userTxList"><div class="tx-loading">Loading…</div></div>
+    </section>
+
+    <!-- ── SUB PAGES ── -->
+
+    <!-- ACCOUNT ACTIVITY -->
+    <section class="panel sub-page hidden" id="pageAccountActivity">
+      <div class="panel-head"><h3>📊 Account Activity</h3><button class="sub-page-close" onclick="closeSubPage('pageAccountActivity')">✕</button></div>
+      <div class="activity-filter">
+        <select class="field-select" onchange="filterActivity(this.value,'type')"><option value="all">All Transactions</option><option value="cr">Credits Only</option><option value="dr">Debits Only</option></select>
+        <select class="field-select" onchange="filterActivity(this.value,'period')"><option value="30">Last 30 Days</option><option value="90">Last 90 Days</option><option value="365">This Year</option><option value="9999">All Time</option></select>
+      </div>
+      <div id="activityTxList"><div class="tx-loading">Loading…</div></div>
+    </section>
+
+    <!-- TX HISTORY -->
+    <section class="panel sub-page hidden" id="pageTxHistory">
+      <div class="panel-head"><h3>💳 Transaction History</h3><button class="sub-page-close" onclick="closeSubPage('pageTxHistory')">✕</button></div>
+      <div id="txHistoryList"><div class="tx-loading">Loading…</div></div>
+    </section>
+
+    <!-- PENDING TX -->
+    <section class="panel sub-page hidden" id="pagePendingTx">
+      <div class="panel-head"><h3>⏳ Pending Transactions</h3><button class="sub-page-close" onclick="closeSubPage('pagePendingTx')">✕</button></div>
+      <div class="sub-page-content">
+        <div class="empty-state"><span>✅</span><p>No pending transactions at this time.</p><p class="empty-sub">Transactions typically clear within 1–3 business days.</p></div>
+      </div>
+    </section>
+
+    <!-- SCHEDULED -->
+    <section class="panel sub-page hidden" id="pageScheduled">
+      <div class="panel-head"><h3>📅 Scheduled Payments</h3><button class="sub-page-close" onclick="closeSubPage('pageScheduled')">✕</button></div>
+      <div class="sub-page-content">
+        <div class="empty-state"><span>📅</span><p>No scheduled payments set up.</p><p class="empty-sub">Contact your administrator to schedule recurring payments.</p></div>
+        <button class="btn-primary full" style="margin-top:16px" onclick="openSupportModal()"><span>Contact Support</span></button>
+      </div>
+    </section>
+
+    <!-- DISPUTE -->
+    <section class="panel sub-page hidden" id="pageDispute">
+      <div class="panel-head"><h3>⚠️ Dispute a Transaction</h3><button class="sub-page-close" onclick="closeSubPage('pageDispute')">✕</button></div>
+      <div class="sub-page-content">
+        <p class="sub-desc">If you believe a transaction is incorrect or unauthorised, please complete the form below. Our team will investigate within 3–5 business days.</p>
+        <div class="field"><label>Transaction Date</label><input type="date" id="disputeDate"/></div>
+        <div class="field"><label>Transaction Amount ($)</label><input type="number" id="disputeAmt" placeholder="e.g. 234.50" step="0.01"/></div>
+        <div class="field"><label>Merchant / Sender Name</label><input type="text" id="disputeName" placeholder="e.g. Amazon, AT&T"/></div>
+        <div class="field"><label>Reason for Dispute</label>
+          <select id="disputeReason">
+            <option>Unauthorised Transaction</option>
+            <option>Incorrect Amount Charged</option>
+            <option>Duplicate Transaction</option>
+            <option>Service / Product Not Received</option>
+            <option>Other</option>
+          </select>
+        </div>
+        <div class="field"><label>Additional Details</label><textarea rows="3" id="disputeDetails" placeholder="Describe what happened…"></textarea></div>
+        <button class="btn-primary full" onclick="submitDispute()"><span>Submit Dispute</span></button>
+        <div id="disputeMsg" class="hidden" style="margin-top:10px"></div>
+      </div>
+    </section>
+
+    <!-- WIRE STATUS -->
+    <section class="panel sub-page hidden" id="pageWireStatus">
+      <div class="panel-head"><h3>🏧 Wire Transfer Status</h3><button class="sub-page-close" onclick="closeSubPage('pageWireStatus')">✕</button></div>
+      <div id="wireStatusList"><div class="tx-loading">Loading…</div></div>
+    </section>
+
+    <!-- WIRE HISTORY -->
+    <section class="panel sub-page hidden" id="pageWireHistory">
+      <div class="panel-head"><h3>🏧 Wire History</h3><button class="sub-page-close" onclick="closeSubPage('pageWireHistory')">✕</button></div>
+      <div id="wireHistoryList"><div class="tx-loading">Loading…</div></div>
+    </section>
+
+    <!-- ESTATEMENTS -->
+    <section class="panel sub-page hidden" id="pageEstatements">
+      <div class="panel-head"><h3>📄 eStatements</h3><button class="sub-page-close" onclick="closeSubPage('pageEstatements')">✕</button></div>
+      <div class="sub-page-content">
+        <p class="sub-desc">Your monthly statements are generated on the 1st of each month.</p>
+        <div class="statement-list">
+          <div class="statement-item"><span class="stmt-icon">📋</span><div><div class="stmt-name">June 2026 Statement</div><div class="stmt-date">01/06/2026</div></div><button class="btn-download" onclick="alert('Statement download is available through your bank branch.')">Download PDF</button></div>
+          <div class="statement-item"><span class="stmt-icon">📋</span><div><div class="stmt-name">May 2026 Statement</div><div class="stmt-date">01/05/2026</div></div><button class="btn-download" onclick="alert('Statement download is available through your bank branch.')">Download PDF</button></div>
+          <div class="statement-item"><span class="stmt-icon">📋</span><div><div class="stmt-name">April 2026 Statement</div><div class="stmt-date">01/04/2026</div></div><button class="btn-download" onclick="alert('Statement download is available through your bank branch.')">Download PDF</button></div>
+          <div class="statement-item"><span class="stmt-icon">📋</span><div><div class="stmt-name">March 2026 Statement</div><div class="stmt-date">01/03/2026</div></div><button class="btn-download" onclick="alert('Statement download is available through your bank branch.')">Download PDF</button></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- MESSAGES -->
+    <section class="panel sub-page hidden" id="pageMessages">
+      <div class="panel-head"><h3>✉️ Messages</h3><button class="sub-page-close" onclick="closeSubPage('pageMessages')">✕</button></div>
+      <div class="sub-page-content">
+        <div class="message-list">
+          <div class="message-item unread"><div class="msg-from">Jyske Bank</div><div class="msg-subject">Welcome to Jyske Bank Online Banking</div><div class="msg-preview">Your account has been successfully activated. You can now manage your finances…</div><div class="msg-date">11/06/2026</div></div>
+          <div class="message-item"><div class="msg-from">Jyske Bank Security</div><div class="msg-subject">New Login Detected</div><div class="msg-preview">A new login was detected on your account. If this was you, no action is needed…</div><div class="msg-date">10/06/2026</div></div>
+          <div class="message-item"><div class="msg-from">Jyske Bank</div><div class="msg-subject">Wire Transfer Update</div><div class="msg-preview">Your wire transfer request has been received and is under review by our team…</div><div class="msg-date">09/06/2026</div></div>
+        </div>
+        <div class="msg-compose">
+          <h4>Send a Message</h4>
+          <div class="field"><label>Subject</label><input type="text" id="msgSubject" placeholder="e.g. Account enquiry…"/></div>
+          <div class="field"><label>Message</label><textarea id="msgBody" rows="3" placeholder="Type your message here…"></textarea></div>
+          <button class="btn-primary" onclick="sendMessage()"><span>Send Message</span></button>
+          <div id="msgSentNote" class="hidden" style="margin-top:10px"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- DIRECT DEPOSIT -->
+    <section class="panel sub-page hidden" id="pageDirectDeposit">
+      <div class="panel-head"><h3>💳 Direct Deposit Form</h3><button class="sub-page-close" onclick="closeSubPage('pageDirectDeposit')">✕</button></div>
+      <div class="sub-page-content">
+        <p class="sub-desc">Provide these details to your employer or payer to set up direct deposit into your Jyske Bank account.</p>
+        <div class="dd-card">
+          <div class="dd-row"><span class="dd-label">Account Holder</span><span class="dd-val">Wesley Nuno</span></div>
+          <div class="dd-row"><span class="dd-label">Bank Name</span><span class="dd-val">Jyske Bank</span></div>
+          <div class="dd-row"><span class="dd-label">Account Type</span><span class="dd-val">Savings</span></div>
+          <div class="dd-row"><span class="dd-label">Account Number</span><span class="dd-val">●●●● ●●●● ●●●● 7662</span></div>
+          <div class="dd-row"><span class="dd-label">Routing Number</span><span class="dd-val">●●●●●●●●●</span></div>
+          <div class="dd-row"><span class="dd-label">SWIFT / BIC</span><span class="dd-val">JYBADKKK</span></div>
+        </div>
+        <div class="dd-notice">🔒 For security, your full account and routing numbers are available by contacting our support team directly.</div>
+        <div class="contact-list" style="margin-top:12px">
+          <div class="contact-item"><span class="ci-icon">📧</span><span>support@jyskebank.com</span></div>
+          <div class="contact-item"><span class="ci-icon">📞</span><span>+45 89 89 89 89</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CARD SERVICES -->
+    <section class="panel sub-page hidden" id="pageCardServices">
+      <div class="panel-head"><h3>💳 Card Services</h3><button class="sub-page-close" onclick="closeSubPage('pageCardServices')">✕</button></div>
+      <div class="sub-page-content">
+        <div class="card-services-card">
+          <div class="cs-card-preview"><div class="cs-card-type">SAVINGS</div><div class="cs-card-num">**** **** **** 7662</div><div class="cs-card-holder">WESLEY NUNO</div></div>
+          <div class="cs-status-row"><span>Card Status</span><span class="cs-status-active">● Active</span></div>
+        </div>
+        <div class="cs-actions">
+          <button class="cs-action-btn" onclick="cardAction('freeze')"><span>🔒</span><span>Freeze Card</span></button>
+          <button class="cs-action-btn" onclick="cardAction('pin')"><span>🔑</span><span>Change PIN</span></button>
+          <button class="cs-action-btn" onclick="cardAction('replace')"><span>🔄</span><span>Replace Card</span></button>
+          <button class="cs-action-btn" onclick="cardAction('lost')"><span>🚨</span><span>Report Lost</span></button>
+        </div>
+        <div id="cardActionMsg" class="hidden" style="margin-top:14px"></div>
+      </div>
+    </section>
+
+    <!-- OPEN NEW ACCOUNT -->
+    <section class="panel sub-page hidden" id="pageNewAccount">
+      <div class="panel-head"><h3>🏦 Open a New Account</h3><button class="sub-page-close" onclick="closeSubPage('pageNewAccount')">✕</button></div>
+      <div class="sub-page-content">
+        <p class="sub-desc">Choose the type of account you would like to open. Our team will process your application within 2–3 business days.</p>
+        <div class="account-type-grid">
+          <div class="account-type-card" onclick="selectAccountType(this,'Savings Account')">
+            <div class="atc-icon">💰</div><div class="atc-name">Savings Account</div>
+            <div class="atc-desc">Earn interest on your balance. No monthly fees.</div>
+          </div>
+          <div class="account-type-card" onclick="selectAccountType(this,'Checking Account')">
+            <div class="atc-icon">💳</div><div class="atc-name">Checking Account</div>
+            <div class="atc-desc">Everyday spending account with debit card access.</div>
+          </div>
+          <div class="account-type-card" onclick="selectAccountType(this,'Business Account')">
+            <div class="atc-icon">🏢</div><div class="atc-name">Business Account</div>
+            <div class="atc-desc">For sole traders and registered businesses.</div>
+          </div>
+          <div class="account-type-card" onclick="selectAccountType(this,'Fixed Deposit')">
+            <div class="atc-icon">🔒</div><div class="atc-name">Fixed Deposit</div>
+            <div class="atc-desc">Lock funds for higher interest rates. 3–24 months.</div>
+          </div>
+        </div>
+        <div id="newAccountForm" class="hidden" style="margin-top:16px">
+          <div class="field"><label>Selected Account Type</label><input type="text" id="selectedAccountType" readonly class="input-readonly"/></div>
+          <div class="control-grid">
+            <div class="field"><label>Full Name</label><input type="text" id="naFullName" value="Wesley Nuno" readonly class="input-readonly"/></div>
+            <div class="field"><label>Date of Birth</label><input type="date" id="naDob"/></div>
+          </div>
+          <div class="field"><label>Purpose of Account</label><input type="text" id="naPurpose" placeholder="e.g. Personal savings, Business revenue…"/></div>
+          <div class="field"><label>Initial Deposit Amount ($)</label><input type="number" id="naDeposit" placeholder="Minimum $100" min="100" step="0.01"/></div>
+          <button class="btn-primary full" onclick="submitNewAccount()"><span>Submit Application</span></button>
+          <div id="naMsg" class="hidden" style="margin-top:10px"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CREDIT SCORE -->
+    <section class="panel sub-page hidden" id="pageCreditScore">
+      <div class="panel-head"><h3>📈 My Credit Score &amp; Report</h3><button class="sub-page-close" onclick="closeSubPage('pageCreditScore')">✕</button></div>
+      <div class="sub-page-content">
+        <div class="credit-score-card">
+          <div class="cs-score-circle">
+            <div class="cs-score-num" id="creditScoreNum">742</div>
+            <div class="cs-score-label">GOOD</div>
+          </div>
+          <div class="cs-score-details">
+            <div class="cs-score-range">Score Range: 300 – 850</div>
+            <div class="cs-score-updated">Last Updated: 01/06/2026</div>
+            <div class="cs-score-bar">
+              <div class="cs-score-fill" style="width:64%"></div>
+            </div>
+            <div class="cs-score-labels"><span>Poor</span><span>Fair</span><span>Good</span><span>Excellent</span></div>
+          </div>
+        </div>
+        <div class="credit-factors">
+          <h4>Score Factors</h4>
+          <div class="cf-item"><span class="cf-label">Payment History</span><span class="cf-badge good">Excellent</span></div>
+          <div class="cf-item"><span class="cf-label">Credit Utilisation</span><span class="cf-badge good">Low</span></div>
+          <div class="cf-item"><span class="cf-label">Account Age</span><span class="cf-badge fair">Fair</span></div>
+          <div class="cf-item"><span class="cf-label">Credit Mix</span><span class="cf-badge good">Good</span></div>
+          <div class="cf-item"><span class="cf-label">New Inquiries</span><span class="cf-badge good">None</span></div>
+        </div>
+        <div class="credit-report-btn">
+          <button class="btn-primary full" onclick="alert('Your full credit report will be emailed to your registered address within 24 hours.')"><span>📄 Request Full Credit Report</span></button>
+        </div>
+      </div>
+    </section>
+
+    <!-- SETTINGS -->
+    <section class="panel sub-page hidden" id="pageSettings">
+      <div class="panel-head"><h3>⚙️ Account Settings</h3><button class="sub-page-close" onclick="closeSubPage('pageSettings')">✕</button></div>
+      <div class="sub-page-content">
+        <div class="settings-group">
+          <div class="settings-label">APPEARANCE</div>
+          <div class="settings-item"><span>Dark Mode</span><button class="toggle-switch" id="darkModeToggle" onclick="toggleDarkMode()">OFF</button></div>
+          <div class="settings-item"><span>Language</span><span class="settings-val">English</span></div>
+        </div>
+        <div class="settings-group">
+          <div class="settings-label">ACCOUNT INFO</div>
+          <div class="settings-item"><span>Account Holder</span><span class="settings-val">Wesley Nuno</span></div>
+          <div class="settings-item"><span>Account Type</span><span class="settings-val">Savings</span></div>
+          <div class="settings-item"><span>Member Since</span><span class="settings-val">August 2025</span></div>
+          <div class="settings-item"><span>Account Number</span><span class="settings-val">**** 7662</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- NOTIFICATIONS -->
+    <section class="panel sub-page hidden" id="pageNotifications">
+      <div class="panel-head"><h3>🔔 Notifications</h3><button class="sub-page-close" onclick="closeSubPage('pageNotifications')">✕</button></div>
+      <div class="sub-page-content">
+        <div class="settings-group">
+          <div class="settings-label">TRANSACTION ALERTS</div>
+          <div class="settings-item"><span>Transaction Alerts</span><button class="toggle-switch on" onclick="toggleNotif(this)">ON</button></div>
+          <div class="settings-item"><span>Large Transaction Alert (over $1,000)</span><button class="toggle-switch on" onclick="toggleNotif(this)">ON</button></div>
+          <div class="settings-item"><span>Low Balance Alert</span><button class="toggle-switch on" onclick="toggleNotif(this)">ON</button></div>
+        </div>
+        <div class="settings-group">
+          <div class="settings-label">ACCOUNT ALERTS</div>
+          <div class="settings-item"><span>Login Alerts</span><button class="toggle-switch on" onclick="toggleNotif(this)">ON</button></div>
+          <div class="settings-item"><span>Wire Transfer Updates</span><button class="toggle-switch on" onclick="toggleNotif(this)">ON</button></div>
+          <div class="settings-item"><span>Statement Ready</span><button class="toggle-switch on" onclick="toggleNotif(this)">ON</button></div>
+          <div class="settings-item"><span>Promotional Messages</span><button class="toggle-switch" onclick="toggleNotif(this)">OFF</button></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECURITY -->
+    <section class="panel sub-page hidden" id="pageSecurity">
+      <div class="panel-head"><h3>🔐 Security &amp; Privacy</h3><button class="sub-page-close" onclick="closeSubPage('pageSecurity')">✕</button></div>
+      <div class="sub-page-content">
+        <div class="settings-group">
+          <div class="settings-label">SECURITY</div>
+          <div class="settings-item clickable" onclick="changePassword()"><span>Change Password</span><span class="settings-arrow">›</span></div>
+          <div class="settings-item"><span>Two-Factor Authentication</span><span class="settings-badge on">ON</span></div>
+          <div class="settings-item clickable" onclick="alert('Your active sessions have been reviewed. Only your current session is active.')"><span>View Active Sessions</span><span class="settings-arrow">›</span></div>
+        </div>
+        <div class="settings-group">
+          <div class="settings-label">PRIVACY</div>
+          <div class="settings-item"><span>Share Data with Partners</span><button class="toggle-switch" onclick="toggleNotif(this)">OFF</button></div>
+          <div class="settings-item clickable" onclick="alert('Your privacy policy is available at jyskebank.com/privacy')"><span>View Privacy Policy</span><span class="settings-arrow">›</span></div>
+        </div>
+        <div id="securityMsg" class="hidden" style="margin-top:10px"></div>
+        <div id="changePasswordForm" class="hidden" style="margin-top:14px">
+          <div class="field"><label>Current Password</label><input type="password" id="curPw" placeholder="Current password"/></div>
+          <div class="field"><label>New Password</label><input type="password" id="newPw" placeholder="New password"/></div>
+          <div class="field"><label>Confirm New Password</label><input type="password" id="confirmPw" placeholder="Confirm new password"/></div>
+          <button class="btn-primary full" onclick="submitPasswordChange()"><span>Update Password</span></button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<!-- ====== ADMIN DASHBOARD ====== -->
+<div id="adminPage" class="page">
+  <nav class="topbar">
+    <div class="topbar-brand"><span class="nav-icon">◎</span><span>JYSKE BANK</span><span class="admin-pill">ADMIN</span></div>
+    <div class="topbar-right">
+      <button class="icon-btn" onclick="toggleTheme()"><span id="themeIconAdmin">🌙</span></button>
+      <button class="btn-out" onclick="doLogout()">Log Out</button>
+    </div>
+  </nav>
+  <main class="dashboard admin-main">
+
+    <div class="card-hero">
+      <div class="bank-card admin-card-style">
+        <div class="card-row top"><span class="card-label">SAVINGS · MANAGED</span><span class="card-label" id="adminCardDate"></span></div>
+        <div class="card-balance" id="adminBalance">—</div>
+        <div class="card-row bottom"><span class="card-pan">**** **** **** 7662</span><span class="card-name">WESLEY NUNO</span></div>
+      </div>
+    </div>
+
+    <!-- ACCOUNT CONTROLS -->
+    <section class="panel">
+      <div class="panel-head"><h3>⚙️ Account Controls</h3></div>
+      <div class="account-controls">
+        <div class="account-status-row">
+          <div><div class="ac-label">Account Status</div><div class="ac-status" id="accountStatusLabel">✅ Active</div></div>
+          <div class="freeze-btns">
+            <button class="btn-freeze" id="btnFreeze" onclick="setAccountStatus('frozen')">🔒 Freeze Account</button>
+            <button class="btn-unfreeze hidden" id="btnUnfreeze" onclick="setAccountStatus('active')">🔓 Unfreeze Account</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- BALANCE MANAGEMENT -->
+    <section class="panel">
+      <div class="panel-head"><h3>💰 Balance Management</h3></div>
+      <div class="tab-bar">
+        <button class="tab-btn active" id="tabAdd" onclick="switchTab('add')">＋ Add Funds</button>
+        <button class="tab-btn" id="tabSub" onclick="switchTab('sub')">− Deduct Funds</button>
+      </div>
+      <div id="formAdd" class="tab-form">
+        <div class="control-grid">
+          <div class="field"><label>Sender / Source Name</label><input type="text" id="addName" placeholder="e.g. Wesley Nuno, Payroll Inc."/></div>
+          <div class="field"><label>Amount (USD)</label><input type="number" id="addAmount" placeholder="0.00" min="0.01" step="0.01" inputmode="decimal"/></div>
+          <div class="field"><label>Transaction Type</label>
+            <select id="addType">
+              <option>Contract Payment</option><option>Payroll / Salary</option><option>Wire Transfer</option>
+              <option>Invoice Payment</option><option>Freelance Income</option><option>Dividend Credit</option>
+              <option>Refund</option><option>Gift / Personal Transfer</option><option>Other Credit</option>
+            </select>
+          </div>
+          <div class="field"><label>Date &amp; Time</label><input type="datetime-local" id="addDateTime"/></div>
+        </div>
+        <div class="field"><label>Note (optional)</label><input type="text" id="addNote" placeholder="Additional reference…"/></div>
+        <button class="btn-add full-btn" onclick="submitBalance('add')">＋ Add Funds</button>
+        <div id="addMsg" class="hidden"></div>
+      </div>
+      <div id="formSub" class="tab-form hidden">
+        <div class="control-grid">
+          <div class="field"><label>Payee / Recipient Name</label><input type="text" id="subName" placeholder="e.g. AT&T, Amazon, Landlord"/></div>
+          <div class="field"><label>Amount (USD)</label><input type="number" id="subAmount" placeholder="0.00" min="0.01" step="0.01" inputmode="decimal"/></div>
+          <div class="field"><label>Expense Category</label>
+            <select id="subType">
+              <option>Internet / Phone Bill</option><option>Utility Bill</option><option>Rent / Mortgage</option>
+              <option>Online Purchase</option><option>Subscription Fee</option><option>Medical / Health</option>
+              <option>Groceries</option><option>Transport / Fuel</option><option>Insurance Premium</option>
+              <option>Tax Payment</option><option>Service Fee</option><option>Wire Transfer Out</option><option>Other Expense</option>
+            </select>
+          </div>
+          <div class="field"><label>Date &amp; Time</label><input type="datetime-local" id="subDateTime"/></div>
+        </div>
+        <div class="field"><label>Note (optional)</label><input type="text" id="subNote" placeholder="Additional reference…"/></div>
+        <button class="btn-sub full-btn" onclick="submitBalance('sub')">− Deduct Funds</button>
+        <div id="subMsg" class="hidden"></div>
+      </div>
+    </section>
+
+    <!-- WIRE REQUESTS -->
+    <section class="panel">
+      <div class="panel-head"><h3>🏧 Wire Transfer Requests</h3><span class="live-badge">● LIVE</span></div>
+      <div id="adminWireList"><div class="tx-loading">No wire requests yet.</div></div>
+    </section>
+
+    <!-- EDIT TRANSACTIONS -->
+    <section class="panel">
+      <div class="panel-head"><h3>✏️ Edit / Backdate Transaction</h3></div>
+      <p class="panel-hint">Tap any transaction to edit its details or backdate it.</p>
+      <div id="adminEditTxList"><div class="tx-loading">Loading…</div></div>
+    </section>
+
+    <!-- LOGIN LOGS -->
+    <section class="panel">
+      <div class="panel-head"><h3>🔐 Login &amp; Logout Activity</h3><span class="live-badge">● LIVE</span></div>
+      <div class="log-list" id="adminLogList"><div class="tx-loading">Loading…</div></div>
+    </section>
+
+    <!-- ALL TRANSACTIONS — ONE LIST ONLY -->
+    <section class="panel">
+      <div class="panel-head"><h3>📋 All Transactions</h3><span class="live-badge">● LIVE</span></div>
+      <div id="adminTxList"><div class="tx-loading">Loading…</div></div>
+    </section>
+
+  </main>
+</div>
+
+<!-- WIRE TRANSFER MODAL -->
+<div id="transferModal" class="modal-overlay hidden" onclick="closeModal('transferModal',event)">
+  <div class="modal-box wire-modal" onclick="event.stopPropagation()">
+    <div id="wireStep0">
+      <div class="modal-head"><div class="modal-title-group"><h3>🏧 Wire Transfer</h3><span class="wire-step-badge">Select Transfer Type</span></div><button class="modal-close" onclick="closeModalDirect('transferModal')">✕</button></div>
+      <div class="wire-notice"><span class="wire-notice-icon">🔒</span><p>All wire transfers are reviewed and approved by our team before processing.</p></div>
+      <div class="wire-type-grid">
+        <button class="wire-type-card" onclick="selectWireType('domestic')"><div class="wtc-icon">🏦</div><div class="wtc-title">Domestic Wire</div><div class="wtc-desc">Transfer within the same country. Uses routing &amp; account number.</div><div class="wtc-fee">Fee: $15–$25 · Same/Next Day</div></button>
+        <button class="wire-type-card" onclick="selectWireType('international')"><div class="wtc-icon">🌍</div><div class="wtc-title">International Wire</div><div class="wtc-desc">Transfer to another country. Uses SWIFT/BIC &amp; IBAN.</div><div class="wtc-fee">Fee: $25–$45 · 1–3 Business Days</div></button>
+      </div>
+    </div>
+    <div id="wireStep1" class="hidden">
+      <div class="modal-head"><div class="modal-title-group"><h3 id="wireFormTitle">Wire Transfer</h3><span class="wire-step-badge" id="wireFormBadge">Step 1 of 2</span></div><button class="modal-close" onclick="closeModalDirect('transferModal')">✕</button></div>
+      <div class="wire-type-tag" id="wireTypeTag"></div>
+      <div id="wireError" class="alert alert-error hidden"></div>
+      <div class="wire-section-label">YOUR ACCOUNT</div>
+      <div class="control-grid">
+        <div class="field"><label>Account Holder</label><input type="text" value="Wesley Nuno" readonly class="input-readonly"/></div>
+        <div class="field"><label>Account Number</label><input type="text" value="**** **** **** 7662" readonly class="input-readonly"/></div>
+      </div>
+      <div class="wire-section-label">RECIPIENT DETAILS</div>
+      <div class="field"><label>Recipient Full Name <span class="req">*</span></label><input type="text" id="wireRecipientName" placeholder="e.g. John Smith / Acme Corp Ltd"/></div>
+      <div class="control-grid">
+        <div class="field"><label>Recipient Bank Name <span class="req">*</span></label><input type="text" id="wireBankName" placeholder="e.g. Chase Bank, Barclays"/></div>
+        <div class="field" id="wireCountryField"><label>Recipient Country <span class="req">*</span></label>
+          <select id="wireCountry"><option value="">— Select Country —</option><option>United States</option><option>United Kingdom</option><option>Germany</option><option>France</option><option>Netherlands</option><option>Canada</option><option>Australia</option><option>Nigeria</option><option>South Africa</option><option>Ghana</option><option>Kenya</option><option>UAE</option><option>Singapore</option><option>China</option><option>India</option><option>Other</option></select>
+        </div>
+      </div>
+      <div id="domesticFields" class="hidden">
+        <div class="wire-section-label">ACCOUNT IDENTIFIERS</div>
+        <div class="control-grid">
+          <div class="field"><label>Account Number <span class="req">*</span></label><input type="text" id="wireDomesticAcct" placeholder="Recipient account number" inputmode="numeric"/></div>
+          <div class="field"><label>Routing Number <span class="req">*</span></label><input type="text" id="wireDomesticRouting" placeholder="9-digit ABA routing no." maxlength="9" inputmode="numeric"/></div>
+        </div>
+        <div class="field"><label>Bank Address <span class="req">*</span></label><input type="text" id="wireDomesticAddress" placeholder="e.g. 270 Park Ave, New York, NY 10017"/></div>
+      </div>
+      <div id="internationalFields" class="hidden">
+        <div class="wire-section-label">INTERNATIONAL IDENTIFIERS</div>
+        <div class="control-grid">
+          <div class="field"><label>IBAN / Account Number <span class="req">*</span></label><input type="text" id="wireIban" placeholder="e.g. GB29 NWBK 6016 1331 9268 19"/></div>
+          <div class="field"><label>SWIFT / BIC Code <span class="req">*</span></label><input type="text" id="wireSwift" placeholder="e.g. CHASUS33" maxlength="11"/></div>
+        </div>
+        <div class="control-grid">
+          <div class="field"><label>Sort Code <span class="uk-only">(UK)</span></label><input type="text" id="wireSortCode" placeholder="e.g. 20-00-00" maxlength="8"/></div>
+          <div class="field"><label>Bank Street Address</label><input type="text" id="wireBankAddress" placeholder="e.g. 1 Churchill Place, London"/></div>
+        </div>
+      </div>
+      <div class="wire-section-label">TRANSFER DETAILS</div>
+      <div class="control-grid">
+        <div class="field"><label>Amount <span class="req">*</span></label><input type="number" id="wireAmount" placeholder="0.00" min="1" step="0.01" inputmode="decimal"/></div>
+        <div class="field"><label>Currency</label>
+          <select id="wireCurrency"><option value="USD">USD — US Dollar</option><option value="EUR">EUR — Euro</option><option value="GBP">GBP — British Pound</option><option value="NGN">NGN — Nigerian Naira</option><option value="GHS">GHS — Ghanaian Cedi</option><option value="KES">KES — Kenyan Shilling</option><option value="ZAR">ZAR — South African Rand</option><option value="AED">AED — UAE Dirham</option><option value="CAD">CAD — Canadian Dollar</option><option value="AUD">AUD — Australian Dollar</option></select>
+        </div>
+      </div>
+      <div class="field"><label>Transfer Purpose / Reference <span class="req">*</span></label><input type="text" id="wireReference" placeholder="e.g. Invoice #1042, Contract Payment"/></div>
+      <div class="field"><label>Additional Notes (optional)</label><textarea id="wireNotes" placeholder="Any extra instructions…" rows="2"></textarea></div>
+      <div class="wire-fee-box"><div class="fee-row"><span>Est. Processing Fee</span><span class="fee-val" id="wireFeeVal">—</span></div><div class="fee-row"><span>Processing Time</span><span class="fee-val" id="wireTimeVal">—</span></div><div class="fee-note">Final fee confirmed before execution.</div></div>
+      <div class="modal-footer"><button class="btn-cancel" onclick="goToWireStep0()">← Back</button><button class="btn-primary" onclick="submitWireStep1()"><span>Review →</span></button></div>
+    </div>
+    <div id="wireStep2" class="hidden">
+      <div class="modal-head"><div class="modal-title-group"><h3>✅ Review &amp; Confirm</h3><span class="wire-step-badge">Step 2 of 2</span></div><button class="modal-close" onclick="closeModalDirect('transferModal')">✕</button></div>
+      <div class="wire-confirm-card" id="wireConfirmCard"></div>
+      <div class="wire-notice warning-notice"><span class="wire-notice-icon">⚠️</span><p>Verify all details carefully. Once submitted you cannot cancel.</p></div>
+      <div class="modal-footer"><button class="btn-cancel" onclick="goBackWire()">← Edit</button><button class="btn-primary" onclick="confirmWire()"><span>Submit Request</span></button></div>
+    </div>
+    <div id="wireStep3" class="hidden">
+      <div class="wire-success">
+        <div class="wire-success-icon">✓</div>
+        <h3>Transfer Request Submitted</h3>
+        <p>Your wire transfer request is now <strong>pending review</strong> by our team. Track the status in your dashboard under Commercial/Wires.</p>
+        <div class="wire-ref-box"><span>Reference ID</span><strong id="wireRefId"></strong></div>
+        <button class="btn-primary full" style="margin-top:20px" onclick="closeWireSuccess()"><span>Done</span></button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- EDIT TX MODAL -->
+<div id="editModal" class="modal-overlay hidden" onclick="closeEditModal(event)">
+  <div class="modal-box" onclick="event.stopPropagation()">
+    <div class="modal-head"><h3>Edit Transaction</h3><button class="modal-close" onclick="closeEditModalDirect()">✕</button></div>
+    <div class="field"><label>Name / Sender</label><input type="text" id="editName"/></div>
+    <div class="field"><label>Description</label><input type="text" id="editDesc"/></div>
+    <div class="field"><label>Amount (negative = debit)</label><input type="number" id="editAmount" step="0.01" inputmode="decimal"/></div>
+    <div class="field"><label>Date &amp; Time</label><input type="datetime-local" id="editDateTime"/></div>
+    <input type="hidden" id="editTxId"/>
+    <div class="modal-footer"><button class="btn-cancel" onclick="closeEditModalDirect()">Cancel</button><button class="btn-primary" onclick="saveEditTx()"><span>Save Changes</span></button></div>
+    <div id="editMsg" class="hidden" style="margin-top:10px"></div>
+  </div>
+</div>
+
+<!-- SUPPORT MODAL -->
+<div id="supportModal" class="modal-overlay hidden" onclick="closeModal('supportModal',event)">
+  <div class="modal-box" onclick="event.stopPropagation()">
+    <div class="modal-head"><h3>📞 Customer Support</h3><button class="modal-close" onclick="closeModalDirect('supportModal')">✕</button></div>
+    <div class="modal-info-card">
+      <p>Our support team is available <strong>Mon–Fri, 8am–6pm CET</strong>.</p>
+      <div class="contact-list">
+        <div class="contact-item"><span class="ci-icon">📧</span><span>support@jyskebank.com</span></div>
+        <div class="contact-item"><span class="ci-icon">📞</span><span>+45 89 89 89 89</span></div>
+        <div class="contact-item"><span class="ci-icon">💬</span><span>Live chat available in-app</span></div>
+      </div>
+    </div>
+    <button class="btn-primary full" onclick="closeModalDirect('supportModal')"><span>Close</span></button>
+  </div>
+</div>
+
+<script type="module" src="firebase-app.js"></script>
+</body>
+</html>
